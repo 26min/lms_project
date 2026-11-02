@@ -12,7 +12,6 @@ router.register(r"courses", CourseViewSet, basename="course")
 
 urlpatterns = [
     path("", include(router.urls)),
-    # Уроки (Generic-классы)
     path("lessons/", LessonListCreateView.as_view(), name="lesson-list"),
     path(
         "lessons/<int:pk>/",

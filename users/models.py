@@ -56,3 +56,49 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class Payment(models.Model):
+    """Платёж за курс или урок"""
+
+    PAYMENT_METHOD_CHOICES = [
+        ("cash", "Наличные"),
+        ("transfer", "Перевод на счёт"),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Пользователь",
+        related_name="payments",
+    )
+    payment_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата оплаты")
+    course = models.ForeignKey(
+        "lms.Course",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name="Оплаченный курс",
+        related_name="payments",
+    )
+    lesson = models.ForeignKey(
+        "lms.Lesson",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name="Оплаченный урок",
+        related_name="payments",
+    )
+    amount = models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name="Сумма оплаты"
+    )
+    payment_method = models.CharField(
+        max_length=20, choices=PAYMENT_METHOD_CHOICES, verbose_name="Способ оплаты"
+    )
+
+    class Meta:
+        verbose_name = "Платёж"
+        verbose_name_plural = "Платежи"
+
+    def __str__(self):
+        return f"{self.user.email} — {self.amount} ({self.payment_method})"
