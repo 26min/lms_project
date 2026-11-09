@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from lms.views import (
     CourseViewSet,
+    CreatePaymentView,
     LessonListCreateView,
     LessonRetrieveUpdateDestroyView,
     SubscriptionAPIView,
@@ -20,4 +21,5 @@ urlpatterns = [
         name="lesson-detail",
     ),
     path("subscribe/", SubscriptionAPIView.as_view(), name="subscribe"),
+    path("payments/create/", CreatePaymentView.as_view(), name="payment-create"),
 ]
