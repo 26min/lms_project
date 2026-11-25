@@ -20,6 +20,7 @@ class Course(models.Model):
     price = models.DecimalField(
         max_digits=10, decimal_places=2, default=1000.00, verbose_name="Цена"
     )
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
     class Meta:
         verbose_name = "Курс"

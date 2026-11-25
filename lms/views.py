@@ -17,6 +17,9 @@ from lms.services import (
 from users.models import Payment
 from users.permissions import IsModerator, IsNotModerator, IsOwner
 
+from .models import Subscription
+
+
 
 class CourseViewSet(viewsets.ModelViewSet):
     """CRUD для курсов"""
@@ -42,6 +45,22 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        course = serializer.save()
+
+        course.updated_at = timezone.now()
+        course.save()
+
+        subscriber_emails = list(
+            Subscription.objects.filter(course=course)
+            .values_list('user__email', flat=True)
+        )
+
+        if subscriber_emails:
+            send_course_update_emails.delay(course.title, subscriber_emails)
+
+
 
 
 class LessonListCreateView(generics.ListCreateAPIView):
